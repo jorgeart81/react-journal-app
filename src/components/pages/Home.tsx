@@ -1,5 +1,9 @@
-import React from 'react';
+import { Typography } from '@mui/material';
 
 export const Home = () => {
-  return <div>Home</div>;
+  return (
+    <>
+      <Typography variant='h1'>Journal Home</Typography>
+    </>
+  );
 };
