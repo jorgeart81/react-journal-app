@@ -3,12 +3,17 @@ import { devtools } from 'zustand/middleware';
 import { Note } from './journal.interface';
 
 interface JournalState {
+  active?: Note;
   isSaving: boolean;
+  messageSaved: string;
   notes: Note[];
 }
 
 interface Actions {
-  // increment: (value: number) => void;
+  // addNewEmptyNote: () => void;
+  // setActiveNote: () => void;
+  // setNotes: () => void;
+  // updateNote: () => void;
 }
 
 const storeApi: StateCreator<
@@ -16,6 +21,7 @@ const storeApi: StateCreator<
   [['zustand/devtools', never]]
 > = (set, get) => ({
   isSaving: false,
+  messageSaved: '',
   notes: [],
 
   // Actions
