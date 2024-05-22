@@ -3,11 +3,37 @@ import { Link as RouterLink } from 'react-router-dom';
 import { AuthLayout } from '@/components/layouts/AuthLayout';
 import { Google } from '@mui/icons-material';
 import { Button, Grid, Link, TextField, Typography } from '@mui/material';
+import { useAuthStore } from '@/stores';
+import { useFormik } from 'formik';
+
+interface RegisterParams {
+  username: string;
+  email: string;
+  password: string;
+}
 
 export const RegisterPage = () => {
+  const { registerUser } = useAuthStore(state => ({
+    registerUser: state.registerUser,
+  }));
+
+  const { handleSubmit, handleChange, handleBlur, values, isSubmitting } =
+    useFormik<RegisterParams>({
+      initialValues: {
+        username: '',
+        email: '',
+        password: '',
+      },
+      onSubmit: ({ username, email, password }: RegisterParams) => {
+        registerUser(username, email, password).catch(error => {
+          console.log(error);
+        });
+      },
+    });
+
   return (
     <AuthLayout title='Registro'>
-      <form>
+      <form method='POST' onSubmit={handleSubmit}>
         <Grid container direction='column' spacing={2}>
           <Grid item xs={12}>
             <TextField
@@ -16,6 +42,9 @@ export const RegisterPage = () => {
               name='username'
               placeholder='John Wick'
               fullWidth
+              value={values.username}
+              onChange={handleChange}
+              onBlur={handleBlur}
             />
           </Grid>
           <Grid item xs={12}>
@@ -25,6 +54,9 @@ export const RegisterPage = () => {
               name='email'
               placeholder='correo@google.com'
               fullWidth
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
             />
           </Grid>
           <Grid item xs={12}>
@@ -34,6 +66,9 @@ export const RegisterPage = () => {
               name='password'
               placeholder='Contraseña'
               fullWidth
+              value={values.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
             />
           </Grid>
         </Grid>
@@ -44,21 +79,9 @@ export const RegisterPage = () => {
           {errorMessage}
         </Alert>
       </Grid> */}
-          <Grid item xs={12} sm={6}>
-            <Button
-              type='submit'
-              variant='contained'
-              disabled={false}
-              fullWidth>
-              Login
-            </Button>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Button
-              variant='contained'
-              disabled={false}
-              onClick={() => {}}
-              fullWidth>
+
+          <Grid item xs={12}>
+            <Button variant='contained' disabled={isSubmitting} fullWidth>
               <Google />
               <Typography sx={{ ml: 1 }}>Google</Typography>
             </Button>

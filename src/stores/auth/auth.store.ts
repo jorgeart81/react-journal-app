@@ -14,6 +14,11 @@ export interface AuthState {
 
 interface Actions {
   loginUser: (email: string, password: string) => Promise<void>;
+  registerUser: (
+    username: string,
+    email: string,
+    password: string
+  ) => Promise<void>;
 }
 
 const storeApi: StateCreator<
@@ -26,6 +31,15 @@ const storeApi: StateCreator<
   loginUser: async (email: string, password: string) => {
     try {
       console.log({ email, password });
+      set({ status: 'authenticated' });
+    } catch (error) {
+      // set({ status: 'unauthorized', user: undefined, token: undefined });
+      throw 'Unauthorized, credentials are not valid.';
+    }
+  },
+  registerUser: async (username: string, email: string, password: string) => {
+    try {
+      console.log({ username, email, password });
       set({ status: 'authenticated' });
     } catch (error) {
       // set({ status: 'unauthorized', user: undefined, token: undefined });

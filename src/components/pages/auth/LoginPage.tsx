@@ -17,7 +17,7 @@ export const LoginPage = () => {
     loginUser: state.loginUser,
   }));
 
-  const { handleSubmit, handleChange, handleBlur, values } =
+  const { handleSubmit, handleChange, handleBlur, values, isSubmitting } =
     useFormik<LoginParams>({
       initialValues: {
         email: '',
@@ -70,11 +70,12 @@ export const LoginPage = () => {
             <Button
               type='submit'
               variant='contained'
-              disabled={false}
+              disabled={isSubmitting}
               fullWidth>
               Login
             </Button>
           </Grid>
+
           <Grid item xs={12} sm={6}>
             <Button
               type='submit'
