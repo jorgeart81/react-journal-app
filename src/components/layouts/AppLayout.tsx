@@ -18,7 +18,7 @@ export const AppLayout = () => {
         "sidebar body"
         `,
       }}>
-      <Box sx={{ gridArea: 'navbar' }}>
+      <Box sx={{ gridArea: 'navbar', height: { xs: '56px', sm: '64px' } }}>
         <Navbar drawerWidth={drawerWidth} />
       </Box>
       <Box sx={{ gridArea: 'sidebar', display: { xs: 'none', md: 'block' } }}>
@@ -31,7 +31,6 @@ export const AppLayout = () => {
           display: 'flex',
           width: '100%',
           padding: 2,
-          mt: { xs: '56px', sm: '64px', md: 0 },
           minHeight: { xs: `calc(100dvh - 56px)`, sm: `calc(100dvh - 64px)` },
         }}>
         <Outlet />

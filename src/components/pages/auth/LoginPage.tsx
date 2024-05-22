@@ -1,28 +1,61 @@
-import { Link as RouterLink} from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
+
+import { useFormik } from 'formik';
+import { Google } from '@mui/icons-material';
 
 import { AuthLayout } from '@/components/layouts/AuthLayout';
-import { Google } from '@mui/icons-material';
 import { Button, Grid, Link, TextField, Typography } from '@mui/material';
+import { useAuthStore } from '@/stores';
+
+interface LoginParams {
+  email: string;
+  password: string;
+}
 
 export const LoginPage = () => {
+  const { loginUser } = useAuthStore(state => ({
+    loginUser: state.loginUser,
+  }));
+
+  const { handleSubmit, handleChange, handleBlur, values } =
+    useFormik<LoginParams>({
+      initialValues: {
+        email: '',
+        password: '',
+      },
+      onSubmit: (values: LoginParams) => {
+        loginUser(values.email, values.password).catch(error => {
+          console.log(error);
+        });
+      },
+    });
+
   return (
     <AuthLayout title='Login'>
-      <form>
+      <form method='POST' onSubmit={handleSubmit}>
         <Grid container direction='column' spacing={2}>
           <Grid item xs={12}>
             <TextField
               label='Correo'
               type='email'
+              name='email'
               placeholder='correo@google.com'
               fullWidth
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
               label='Contraseña'
               type='password'
+              name='password'
               placeholder='Contraseña'
               fullWidth
+              value={values.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
             />
           </Grid>
         </Grid>
@@ -44,9 +77,9 @@ export const LoginPage = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Button
+              type='submit'
               variant='contained'
               disabled={false}
-              onClick={() => {}}
               fullWidth>
               <Google />
               <Typography sx={{ ml: 1 }}>Google</Typography>

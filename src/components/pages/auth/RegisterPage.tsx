@@ -12,7 +12,8 @@ export const RegisterPage = () => {
           <Grid item xs={12}>
             <TextField
               label='Nombre completo'
-              type='username'
+              type='text'
+              name='username'
               placeholder='John Wick'
               fullWidth
             />
@@ -21,6 +22,7 @@ export const RegisterPage = () => {
             <TextField
               label='Correo'
               type='email'
+              name='email'
               placeholder='correo@google.com'
               fullWidth
             />
@@ -29,6 +31,7 @@ export const RegisterPage = () => {
             <TextField
               label='Contraseña'
               type='password'
+              name='password'
               placeholder='Contraseña'
               fullWidth
             />
