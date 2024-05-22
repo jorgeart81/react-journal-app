@@ -1,9 +1,10 @@
-import { Typography } from '@mui/material';
+import { NothingSelectedView } from '../views';
 
 export const Home = () => {
   return (
     <>
-      <Typography variant='h1'>Journal Home</Typography>
+
+      <NothingSelectedView />
     </>
   );
 };

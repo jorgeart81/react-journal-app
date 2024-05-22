@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 
 import { AuthLayout } from '@/components/layouts/AuthLayout';
 import { Google } from '@mui/icons-material';
@@ -63,11 +63,11 @@ export const RegisterPage = () => {
         </Grid>
       </form>
       <Grid container direction='row' justifyContent='end'>
-      <Typography sx={{ mr: 1 }}>¿Ya tienes cuenta?</Typography>
+        <Typography sx={{ mr: 1 }}>¿Ya tienes cuenta?</Typography>
         <Link
           unstable_viewTransition
           to={'/login'}
-          component={NavLink}
+          component={RouterLink}
           color='inherit'
           justifyContent='end'>
           Ingresar aquí

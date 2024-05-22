@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { Link as RouterLink} from 'react-router-dom';
 
 import { AuthLayout } from '@/components/layouts/AuthLayout';
 import { Google } from '@mui/icons-material';
@@ -59,7 +59,7 @@ export const LoginPage = () => {
         <Link
           unstable_viewTransition
           to={'/register'}
-          component={NavLink}
+          component={RouterLink}
           color='inherit'
           justifyContent='end'>
           Crear una cuenta
