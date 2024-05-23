@@ -20,8 +20,9 @@ interface AuthState {
 }
 
 interface Actions {
-  loginUser: (values: LoginUser) => Promise<void>;
+  setUser: (user: UserStore) => void;
   onGoogleSingIn: () => Promise<void>;
+  loginUser: (values: LoginUser) => Promise<void>;
   registerUser: (values: RegisterUser) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -34,6 +35,10 @@ const storeApi: StateCreator<
   status: 'unauthorized',
 
   // Actions
+  setUser: (user: UserStore) => {
+    const newUser = userStoreAdapter(user);
+    set({ user: newUser });
+  },
   onGoogleSingIn: async () => {
     set({ status: 'checking' });
     try {

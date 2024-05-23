@@ -1,7 +1,6 @@
 import type { UserStore } from '../authStore.interface';
-import type { User } from 'firebase/auth/cordova';
 
-export const userStoreAdapter = (user: User): UserStore => {
+export const userStoreAdapter = (user: any): UserStore => {
   return {
     uid: user.uid,
     email: user.email,

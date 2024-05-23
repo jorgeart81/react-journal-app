@@ -2,10 +2,13 @@ import { Box } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { Navbar } from '../navigation';
 import { Sidebar } from '../navigation/sidebar/Sidebar';
+import { useCheckOut } from '@/hooks';
 
 const drawerWidth = 240;
 
 export const AppLayout = () => {
+  useCheckOut();
+
   return (
     <Box
       sx={{
