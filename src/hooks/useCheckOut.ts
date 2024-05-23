@@ -5,7 +5,8 @@ import { FirebaseAuth } from '@/services/firebase/config';
 import { useAuthStore } from '@/stores';
 
 export const useCheckOut = () => {
-  const { setUser, logout } = useAuthStore(state => ({
+  const { status, setUser, logout } = useAuthStore(state => ({
+    status: state.status,
     setUser: state.setUser,
     logout: state.logout,
   }));
@@ -19,4 +20,9 @@ export const useCheckOut = () => {
       setUser(user);
     });
   }, []);
+
+  return {
+    isAuthenticated: status === 'authenticated',
+    logout,
+  };
 };

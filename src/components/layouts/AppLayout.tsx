@@ -1,13 +1,24 @@
 import { Box } from '@mui/material';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Navbar } from '../navigation';
 import { Sidebar } from '../navigation/sidebar/Sidebar';
 import { useCheckOut } from '@/hooks';
+import { useEffect } from 'react';
 
 const drawerWidth = 240;
 
 export const AppLayout = () => {
-  useCheckOut();
+  const { isAuthenticated, logout } = useCheckOut();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+  }, [isAuthenticated]);
+
+  if (!isAuthenticated) return null;
 
   return (
     <Box
@@ -22,7 +33,7 @@ export const AppLayout = () => {
         `,
       }}>
       <Box sx={{ gridArea: 'navbar', height: { xs: '56px', sm: '64px' } }}>
-        <Navbar drawerWidth={drawerWidth} />
+        <Navbar drawerWidth={drawerWidth} handleLogout={logout} />
       </Box>
       <Box sx={{ gridArea: 'sidebar', display: { xs: 'none', md: 'block' } }}>
         <Sidebar drawerWidth={drawerWidth} />

@@ -1,5 +1,7 @@
-import { Grid, Typography } from '@mui/material';
 import { useAuthStore } from '@/stores';
+import { Grid, Typography } from '@mui/material';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CircularIndeterminate } from '../progress';
 
 interface AuthLayoutProps {
@@ -7,9 +9,17 @@ interface AuthLayoutProps {
   title: string;
 }
 export const AuthLayout = ({ children, title }: AuthLayoutProps) => {
+  const navigate = useNavigate();
   const { status } = useAuthStore(state => ({
     status: state.status,
   }));
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      navigate('/app');
+      return;
+    }
+  }, [status]);
 
   return (
     <>

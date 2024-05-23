@@ -7,7 +7,7 @@ import { useAuthStore } from '@/stores';
 
 const status = useAuthStore.getState().status;
 
-const freeRoutes = [
+export const router = createBrowserRouter([
   {
     path: '/*',
     element: <Navigate to='/login' />,
@@ -20,10 +20,6 @@ const freeRoutes = [
     path: '/register',
     element: <RegisterPage />,
   },
-];
-
-const protectedRoutes = [
-  ...freeRoutes,
   {
     path: '/app',
     element: <AppLayout />,
@@ -34,8 +30,4 @@ const protectedRoutes = [
       },
     ],
   },
-];
-
-export const router = createBrowserRouter(
-  status === 'authenticated' ? protectedRoutes : freeRoutes
-);
+]);

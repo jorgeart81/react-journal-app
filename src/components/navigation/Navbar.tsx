@@ -3,9 +3,10 @@ import { AppBar, Grid, IconButton, Toolbar, Typography } from '@mui/material';
 
 interface Props {
   drawerWidth?: number;
+  handleLogout: React.MouseEventHandler;
 }
 
-export const Navbar = ({ drawerWidth = 240 }: Props) => (
+export const Navbar = ({ drawerWidth = 240, handleLogout }: Props) => (
   <AppBar
     position='fixed'
     sx={{
@@ -26,7 +27,7 @@ export const Navbar = ({ drawerWidth = 240 }: Props) => (
         <Typography variant='h6' noWrap component='div'>
           JournalApp
         </Typography>
-        <IconButton color='error' onClick={() => {}}>
+        <IconButton color='error' onClick={handleLogout}>
           <LogoutOutlined />
         </IconButton>
       </Grid>
