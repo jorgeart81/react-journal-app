@@ -3,8 +3,11 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layouts/AppLayout';
 import { Home } from '../components/pages';
 import { LoginPage, RegisterPage } from '../components/pages/auth';
+import { useAuthStore } from '@/stores';
 
-export const router = createBrowserRouter([
+const status = useAuthStore.getState().status;
+
+const freeRoutes = [
   {
     path: '/*',
     element: <Navigate to='/login' />,
@@ -17,6 +20,10 @@ export const router = createBrowserRouter([
     path: '/register',
     element: <RegisterPage />,
   },
+];
+
+const protectedRoutes = [
+  ...freeRoutes,
   {
     path: '/app',
     element: <AppLayout />,
@@ -27,4 +34,8 @@ export const router = createBrowserRouter([
       },
     ],
   },
-]);
+];
+
+export const router = createBrowserRouter(
+  status === 'authenticated' ? protectedRoutes : freeRoutes
+);
