@@ -65,16 +65,14 @@ export const LoginPage = () => {
       password: '',
     },
     onSubmit: (values: LoginParams) => {
-      loginUser(values.email, values.password).catch(error => {
-        console.log(error);
-      });
+      loginUser(values);
     },
     validationSchema: loginValidate,
   });
 
   return (
     <AuthLayout title='Login'>
-      <form method='POST' onSubmit={handleSubmit}>
+      <form method='POST' onSubmit={handleSubmit} noValidate>
         <Grid container direction='column' spacing={2}>
           <Grid item xs={12}>
             <TextField
@@ -104,6 +102,7 @@ export const LoginPage = () => {
               disabled={isAuthenticated}
               error={Boolean(touched.password && errors.password)}
               helperText={errors.password}
+              autoComplete='off'
             />
           </Grid>
         </Grid>
