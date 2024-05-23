@@ -1,8 +1,13 @@
 import { create, StateCreator } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
-import { signInWithGoogle } from '@/services/firebase';
-import type { UserStore } from './authStore.interface';
+import {
+  loginInWithEmailAndPassword,
+  logoutFirebase,
+  registerUserWithEmailAndPassword,
+  signInWithGoogle,
+} from '@/services/firebase';
+import type { LoginUser, RegisterUser, UserStore } from './authStore.interface';
 import { SotorageKey } from '@/models';
 import { userStoreAdapter } from './adapters/userStore.adapter';
 
@@ -15,13 +20,9 @@ interface AuthState {
 }
 
 interface Actions {
-  loginUser: (email: string, password: string) => Promise<void>;
+  loginUser: (values: LoginUser) => Promise<void>;
   onGoogleSingIn: () => Promise<void>;
-  registerUser: (
-    username: string,
-    email: string,
-    password: string
-  ) => Promise<void>;
+  registerUser: (values: RegisterUser) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -33,21 +34,15 @@ const storeApi: StateCreator<
   status: 'unauthorized',
 
   // Actions
-  loginUser: async (email: string, password: string) => {
-    set({ status: 'checking' });
-
-    try {
-      console.log({ email, password });
-      // set({ status: 'authenticated' });
-    } catch (error) {
-      set({ status: 'unauthorized' });
-      throw 'Unauthorized, credentials are not valid.';
-    }
-  },
   onGoogleSingIn: async () => {
+    set({ status: 'checking' });
     try {
       const user = await signInWithGoogle();
-      set({ status: 'authenticated', user: userStoreAdapter(user) });
+      set({
+        status: 'authenticated',
+        user: userStoreAdapter(user),
+        errorMessage: undefined,
+      });
     } catch (error) {
       const err = error as Error;
       set({
@@ -57,18 +52,52 @@ const storeApi: StateCreator<
       });
     }
   },
-  registerUser: async (username: string, email: string, password: string) => {
+  loginUser: async (values: LoginUser) => {
     set({ status: 'checking' });
 
     try {
-      console.log({ username, email, password });
-      set({ status: 'authenticated' });
+      const user = await loginInWithEmailAndPassword(values);
+      set({
+        status: 'authenticated',
+        user: userStoreAdapter(user),
+        errorMessage: undefined,
+      });
     } catch (error) {
-      set({ status: 'unauthorized' });
-      throw 'Unauthorized, credentials are not valid.';
+      const err = error as Error;
+      set({
+        status: 'unauthorized',
+        user: undefined,
+        errorMessage: err.message,
+      });
     }
   },
-  logout: async () => {},
+  registerUser: async ({ username, email, password }: RegisterUser) => {
+    set({ status: 'checking' });
+
+    try {
+      const user = await registerUserWithEmailAndPassword({
+        displayName: username,
+        email: email,
+        password: password,
+      });
+      set({
+        status: 'authenticated',
+        user: userStoreAdapter(user),
+        errorMessage: undefined,
+      });
+    } catch (error) {
+      const err = error as Error;
+      set({
+        status: 'unauthorized',
+        user: undefined,
+        errorMessage: err.message,
+      });
+    }
+  },
+  logout: async () => {
+    await logoutFirebase();
+    set({ status: 'unauthorized', user: undefined, errorMessage: undefined });
+  },
 });
 
 export const useAuthStore = create<AuthState & Actions>()(

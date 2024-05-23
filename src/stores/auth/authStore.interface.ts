@@ -4,3 +4,12 @@ export interface UserStore {
   displayName?: string | null;
   photoURL?: string | null;
 }
+
+export interface LoginUser {
+  email: string;
+  password: string;
+}
+
+export interface RegisterUser extends LoginUser {
+  username: string;
+}
