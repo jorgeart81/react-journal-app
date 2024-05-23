@@ -4,6 +4,7 @@ import { devtools, persist } from 'zustand/middleware';
 import { signInWithGoogle } from '@/services/firebase';
 import type { UserStore } from './authStore.interface';
 import { SotorageKey } from '@/models';
+import { userStoreAdapter } from './adapters/userStore.adapter';
 
 type Status = 'checking' | 'unauthorized' | 'authenticated';
 
@@ -46,7 +47,7 @@ const storeApi: StateCreator<
   onGoogleSingIn: async () => {
     try {
       const user = await signInWithGoogle();
-      set({ status: 'authenticated', user });
+      set({ status: 'authenticated', user: userStoreAdapter(user) });
     } catch (error) {
       const err = error as Error;
       set({

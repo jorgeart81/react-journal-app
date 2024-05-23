@@ -81,9 +81,12 @@ export const RegisterPage = () => {
       </Grid> */}
 
           <Grid item xs={12}>
-            <Button variant='contained' disabled={isSubmitting} fullWidth>
-              <Google />
-              <Typography sx={{ ml: 1 }}>Google</Typography>
+            <Button
+              type='submit'
+              variant='contained'
+              disabled={isSubmitting}
+              fullWidth>
+              Crear Cuenta
             </Button>
           </Grid>
         </Grid>

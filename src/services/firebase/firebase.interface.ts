@@ -1,4 +1,33 @@
-export interface GoogleResponse {
+export interface FirebaseLoginResponse {
+  user: User;
+  providerId: string;
+  _tokenResponse: TokenResponse;
+  operationType: string;
+}
+
+export interface TokenResponse {
+  federatedId: string;
+  providerId: string;
+  email: string;
+  emailVerified: boolean;
+  firstName: string;
+  fullName: string;
+  lastName: string;
+  photoUrl: string;
+  localId: string;
+  displayName: string;
+  idToken: string;
+  context: string;
+  oauthAccessToken: string;
+  oauthExpireIn: number;
+  refreshToken: string;
+  expiresIn: string;
+  oauthIdToken: string;
+  rawUserInfo: string;
+  kind: string;
+}
+
+export interface User {
   uid: string;
   email: string;
   emailVerified: boolean;
