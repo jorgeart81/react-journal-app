@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 import { useFormik } from 'formik';
@@ -13,11 +14,30 @@ import {
   Typography,
 } from '@mui/material';
 import { useAuthStore } from '@/stores';
+import * as yup from 'yup';
+import { passwordRegex } from '@/utils/regex';
 
 interface LoginParams {
   email: string;
   password: string;
 }
+
+const loginValidate = yup.object().shape({
+  email: yup
+    .string()
+    .email('El Correo tiene un formato invalido.')
+    .required('Correo es un campo requerido.'),
+  password: yup
+    .string()
+    .trim()
+    .min(6, 'La Contraseña debe tener un mínimo de 6 caracters')
+    .max(50)
+    .required('Contraseña es un campo requerido.')
+    .matches(
+      passwordRegex,
+      'La Contraseña debe tener una letra mayúscula, minúscula y un número.'
+    ),
+});
 
 export const LoginPage = () => {
   const { status, errorMessage, loginUser, onGoogleSingIn } = useAuthStore(
@@ -29,18 +49,28 @@ export const LoginPage = () => {
     })
   );
 
-  const { handleSubmit, handleChange, handleBlur, values, isSubmitting } =
-    useFormik<LoginParams>({
-      initialValues: {
-        email: '',
-        password: '',
-      },
-      onSubmit: (values: LoginParams) => {
-        loginUser(values.email, values.password).catch(error => {
-          console.log(error);
-        });
-      },
-    });
+  const isAuthenticated = useMemo(() => status === 'checking', [status]);
+
+  const {
+    handleSubmit,
+    handleChange,
+    handleBlur,
+    values,
+    touched,
+    errors,
+    isValid,
+  } = useFormik<LoginParams>({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    onSubmit: (values: LoginParams) => {
+      loginUser(values.email, values.password).catch(error => {
+        console.log(error);
+      });
+    },
+    validationSchema: loginValidate,
+  });
 
   return (
     <AuthLayout title='Login'>
@@ -56,7 +86,9 @@ export const LoginPage = () => {
               value={values.email}
               onChange={handleChange}
               onBlur={handleBlur}
-              disabled={isSubmitting}
+              disabled={isAuthenticated}
+              error={Boolean(touched.email && errors.email)}
+              helperText={errors.email}
             />
           </Grid>
           <Grid item xs={12}>
@@ -69,7 +101,9 @@ export const LoginPage = () => {
               value={values.password}
               onChange={handleChange}
               onBlur={handleBlur}
-              disabled={isSubmitting}
+              disabled={isAuthenticated}
+              error={Boolean(touched.password && errors.password)}
+              helperText={errors.password}
             />
           </Grid>
         </Grid>
@@ -82,7 +116,7 @@ export const LoginPage = () => {
             <Button
               type='submit'
               variant='contained'
-              disabled={isSubmitting}
+              disabled={isAuthenticated || !isValid}
               fullWidth>
               Login
             </Button>
@@ -92,7 +126,7 @@ export const LoginPage = () => {
             <Button
               variant='contained'
               onClick={onGoogleSingIn}
-              disabled={status === 'checking'}
+              disabled={isAuthenticated}
               fullWidth>
               <Google />
               <Typography sx={{ ml: 1 }}>Google</Typography>
