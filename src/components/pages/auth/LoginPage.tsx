@@ -4,7 +4,14 @@ import { useFormik } from 'formik';
 import { Google } from '@mui/icons-material';
 
 import { AuthLayout } from '@/components/layouts/AuthLayout';
-import { Button, Grid, Link, TextField, Typography } from '@mui/material';
+import {
+  Alert,
+  Button,
+  Grid,
+  Link,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useAuthStore } from '@/stores';
 
 interface LoginParams {
@@ -13,9 +20,14 @@ interface LoginParams {
 }
 
 export const LoginPage = () => {
-  const { loginUser } = useAuthStore(state => ({
-    loginUser: state.loginUser,
-  }));
+  const { status, errorMessage, loginUser, onGoogleSingIn } = useAuthStore(
+    state => ({
+      status: state.status,
+      errorMessage: state.errorMessage,
+      loginUser: state.loginUser,
+      onGoogleSingIn: state.onGoogleSingIn,
+    })
+  );
 
   const { handleSubmit, handleChange, handleBlur, values, isSubmitting } =
     useFormik<LoginParams>({
@@ -36,36 +48,36 @@ export const LoginPage = () => {
         <Grid container direction='column' spacing={2}>
           <Grid item xs={12}>
             <TextField
+              fullWidth
               label='Correo'
               type='email'
               name='email'
               placeholder='correo@google.com'
-              fullWidth
               value={values.email}
               onChange={handleChange}
               onBlur={handleBlur}
+              disabled={isSubmitting}
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
+              fullWidth
               label='Contraseña'
               type='password'
               name='password'
               placeholder='Contraseña'
-              fullWidth
               value={values.password}
               onChange={handleChange}
               onBlur={handleBlur}
+              disabled={isSubmitting}
             />
           </Grid>
         </Grid>
 
         <Grid container spacing={2} sx={{ mb: 2, mt: 1 }}>
-          {/* <Grid item xs={12} display={!!errorMessage ? '' : 'none'}>
-              <Alert severity='error'>
-                {errorMessage}
-              </Alert>
-            </Grid> */}
+          <Grid item xs={12} display={errorMessage ? '' : 'none'}>
+            <Alert severity='error'>{errorMessage}</Alert>
+          </Grid>
           <Grid item xs={12} sm={6}>
             <Button
               type='submit'
@@ -78,9 +90,9 @@ export const LoginPage = () => {
 
           <Grid item xs={12} sm={6}>
             <Button
-              type='submit'
               variant='contained'
-              disabled={false}
+              onClick={onGoogleSingIn}
+              disabled={status === 'checking'}
               fullWidth>
               <Google />
               <Typography sx={{ ml: 1 }}>Google</Typography>
