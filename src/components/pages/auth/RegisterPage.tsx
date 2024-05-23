@@ -1,10 +1,11 @@
 import { Link as RouterLink } from 'react-router-dom';
 
 import { AuthLayout } from '@/components/layouts/AuthLayout';
-import { Google } from '@mui/icons-material';
-import { Button, Grid, Link, TextField, Typography } from '@mui/material';
 import { useAuthStore } from '@/stores';
+import { Button, Grid, Link, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
+import * as yup from 'yup';
+import { passwordRegex } from '@/utils/regex';
 
 interface RegisterParams {
   username: string;
@@ -12,28 +13,58 @@ interface RegisterParams {
   password: string;
 }
 
+const registerValidate = yup.object().shape({
+  username: yup
+    .string()
+    .max(50)
+    .required('Nombre completo es un campo requerido.'),
+  email: yup
+    .string()
+    .email('El Correo tiene un formato invalido.')
+    .required('Correo es un campo requerido.'),
+  password: yup
+    .string()
+    .trim()
+    .min(6, 'La Contraseña debe tener un mínimo de 6 caracters')
+    .max(50)
+    .required('Contraseña es un campo requerido.')
+    .matches(
+      passwordRegex,
+      'La Contraseña debe tener una letra mayúscula, minúscula y un número.'
+    ),
+});
+
 export const RegisterPage = () => {
   const { registerUser } = useAuthStore(state => ({
     registerUser: state.registerUser,
   }));
 
-  const { handleSubmit, handleChange, handleBlur, values, isSubmitting } =
-    useFormik<RegisterParams>({
-      initialValues: {
-        username: '',
-        email: '',
-        password: '',
-      },
-      onSubmit: ({ username, email, password }: RegisterParams) => {
-        registerUser(username, email, password).catch(error => {
-          console.log(error);
-        });
-      },
-    });
+  const {
+    handleSubmit,
+    handleChange,
+    handleBlur,
+    values,
+    isSubmitting,
+    touched,
+    errors,
+    isValid,
+  } = useFormik<RegisterParams>({
+    initialValues: {
+      username: '',
+      email: '',
+      password: '',
+    },
+    onSubmit: ({ username, email, password }: RegisterParams) => {
+      registerUser(username, email, password).catch(error => {
+        console.log(error);
+      });
+    },
+    validationSchema: registerValidate,
+  });
 
   return (
     <AuthLayout title='Registro'>
-      <form method='POST' onSubmit={handleSubmit}>
+      <form method='POST' onSubmit={handleSubmit} noValidate>
         <Grid container direction='column' spacing={2}>
           <Grid item xs={12}>
             <TextField
@@ -45,6 +76,8 @@ export const RegisterPage = () => {
               value={values.username}
               onChange={handleChange}
               onBlur={handleBlur}
+              error={Boolean(touched.username && errors.username)}
+              helperText={errors.username}
             />
           </Grid>
           <Grid item xs={12}>
@@ -57,6 +90,8 @@ export const RegisterPage = () => {
               value={values.email}
               onChange={handleChange}
               onBlur={handleBlur}
+              error={Boolean(touched.email && errors.email)}
+              helperText={errors.email}
             />
           </Grid>
           <Grid item xs={12}>
@@ -69,6 +104,9 @@ export const RegisterPage = () => {
               value={values.password}
               onChange={handleChange}
               onBlur={handleBlur}
+              error={Boolean(touched.password && errors.password)}
+              helperText={errors.password}
+              autoComplete='off'
             />
           </Grid>
         </Grid>
@@ -84,7 +122,7 @@ export const RegisterPage = () => {
             <Button
               type='submit'
               variant='contained'
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isValid}
               fullWidth>
               Crear Cuenta
             </Button>
