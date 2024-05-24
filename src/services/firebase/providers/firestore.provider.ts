@@ -5,6 +5,7 @@ import { FirebaseDB } from '../config';
 import type {
   CreateNewNoteRequest,
   LoadingNotesResponse,
+  SaveNoteRequest,
 } from '../firebase.interface';
 import { Note } from '@/stores/journal/journal.interface';
 
@@ -26,6 +27,16 @@ export const loadingNotes = async (
     const { docs } = await getDocs(collectionRef);
     const notes = docs.map(doc => ({ id: doc.id, ...doc.data() })) as Note[];
     return { notes };
+  } catch (error) {
+    errorHandler(error);
+  }
+};
+
+export const saveNote = async ({ uid, note }: SaveNoteRequest) => {
+  const { id, ...noteToFireStore } = note;
+  try {
+    const docRef = doc(FirebaseDB, `${uid}/journal/notes/${id}`);
+    await setDoc(docRef, noteToFireStore, { merge: true });
   } catch (error) {
     errorHandler(error);
   }
