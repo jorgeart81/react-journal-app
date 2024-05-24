@@ -1,11 +1,9 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { AppLayout } from '@/components/layouts/AppLayout';
-import { Home } from '../components/pages';
+import { Journal } from '../components/pages';
 import { LoginPage, RegisterPage } from '../components/pages/auth';
-import { useAuthStore } from '@/stores';
 
-const status = useAuthStore.getState().status;
 
 export const router = createBrowserRouter([
   {
@@ -26,7 +24,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <Home />,
+        element: <Journal />,
       },
     ],
   },
