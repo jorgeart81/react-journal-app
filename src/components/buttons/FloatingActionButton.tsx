@@ -16,6 +16,7 @@ export const FloatingActionButton = ({ disabled, onClick }: Props) => {
         color: 'white',
         backgroundColor: 'error.main',
         ':hover': { backgroundColor: 'error.main', opacity: 0.9 },
+        ':disabled':{ backgroundColor: 'error.main', opacity: 0.5, color:'white' },
         position: 'fixed',
         right: { xs: 40, sm: 50, xl: 60 },
         bottom: { xs: 40, sm: 50, xl: 60 },
