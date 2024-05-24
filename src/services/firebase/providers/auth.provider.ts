@@ -9,7 +9,7 @@ import {
 import type { User } from 'firebase/auth/cordova';
 
 import { FirebaseAuth } from '@/services/firebase/config';
-import type { LoginRequest, RegisterRequest } from './firebase.interface';
+import type { LoginRequest, RegisterRequest } from '../firebase.interface';
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -62,6 +62,7 @@ export const logoutFirebase = async () => {
   return await FirebaseAuth.signOut();
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function errorHandler(error: any): never {
   const firebaseError = error as FirebaseError;
   const errorMessage = firebaseError.message;
