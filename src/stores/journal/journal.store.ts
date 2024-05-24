@@ -1,7 +1,7 @@
 import { create, StateCreator } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { createNewNote, loadingNotes } from '@/services/firebase';
+import { createNewNote, loadingNotes, saveNote } from '@/services/firebase';
 import type { Note } from './journal.interface';
 
 interface JournalState {
@@ -15,8 +15,8 @@ interface Actions {
   // addNewEmptyNote: () => void;
   setActiveNote: (id?: string) => void;
   // setNotes: () => void;
-  // updateNote: () => void;
   startNewNote: (uid: string) => void;
+  updateNote: (uid: string, note: Note) => void;
   startLoadingNotes: (uid: string) => void;
 }
 
@@ -51,6 +51,22 @@ const storeApi: StateCreator<
       notes.push(newNote);
 
       set({ isSaving: false, notes: notes, activeNote: newNote });
+    } catch (error) {
+      const err = error as Error;
+      throw `${err.message}`;
+    }
+  },
+  updateNote: async (uid: string, note: Note) => {
+    set({ isSaving: true });
+
+    try {
+      await saveNote({ uid, note });
+      const notes = get().notes.map(n => {
+        if (n.id === note.id) return note;
+        return n;
+      });
+
+      set({ isSaving: false, activeNote: note, notes });
     } catch (error) {
       const err = error as Error;
       throw `${err.message}`;
