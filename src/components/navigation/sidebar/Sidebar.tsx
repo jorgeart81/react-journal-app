@@ -33,7 +33,7 @@ export const Sidebar = ({ drawerWidth = 240, userName = 'User' }: Props) => {
           {notes?.map(note => (
             <SidebarItem
               key={note.id}
-              title={note.body}
+              title={note.title}
               description={note.body}
               onClick={() => setActiveNote(note.id)}
             />

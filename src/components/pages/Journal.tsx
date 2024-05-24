@@ -5,12 +5,12 @@ import { useAuthStore, useJournalStore } from '@/stores';
 export const Journal = () => {
   const uid = useAuthStore.getState().user?.uid;
 
-  const { activeNote, isSaving, notes, startNewNote } = useJournalStore(
+  const { activeNote, isSaving, startNewNote, updateNote } = useJournalStore(
     state => ({
       activeNote: state.activeNote,
       isSaving: state.isSaving,
-      notes: state.notes,
       startNewNote: state.startNewNote,
+      updateNote: state.updateNote,
     })
   );
 
@@ -21,7 +21,11 @@ export const Journal = () => {
 
   return (
     <>
-      {activeNote ? <NoteView /> : <NothingSelectedView />}
+      {uid && activeNote ? (
+        <NoteView uid={uid} note={activeNote} saveNote={updateNote} />
+      ) : (
+        <NothingSelectedView />
+      )}
 
       <FloatingActionButton onClick={addNewNote} disabled={isSaving} />
     </>

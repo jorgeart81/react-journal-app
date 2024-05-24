@@ -17,3 +17,5 @@ export interface CreateNewNoteRequest {
 export interface LoadingNotesResponse {
   notes: Note[];
 }
+
+export interface SaveNoteRequest extends CreateNewNoteRequest {}
