@@ -1,14 +1,31 @@
-import { collection, doc, setDoc } from 'firebase/firestore/lite';
+import { collection, doc, getDocs, setDoc } from 'firebase/firestore/lite';
 
-import type { CreateNewNoteRequest } from '../firebase.interface';
-import { FirebaseDB } from '../config';
 import { FirebaseError } from 'firebase/app';
+import { FirebaseDB } from '../config';
+import type {
+  CreateNewNoteRequest,
+  LoadingNotesResponse,
+} from '../firebase.interface';
+import { Note } from '@/stores/journal/journal.interface';
 
 export const createNewNote = async ({ uid, note }: CreateNewNoteRequest) => {
   try {
     const newDoc = doc(collection(FirebaseDB, `${uid}/journal/notes`));
     await setDoc(newDoc, note);
     return newDoc;
+  } catch (error) {
+    errorHandler(error);
+  }
+};
+
+export const loadingNotes = async (
+  uid: string
+): Promise<LoadingNotesResponse> => {
+  try {
+    const collectionRef = collection(FirebaseDB, `${uid}/journal/notes`);
+    const { docs } = await getDocs(collectionRef);
+    const notes = docs.map(doc => ({ id: doc.id, ...doc.data() })) as Note[];
+    return { notes };
   } catch (error) {
     errorHandler(error);
   }

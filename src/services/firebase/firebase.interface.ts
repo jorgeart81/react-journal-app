@@ -11,5 +11,9 @@ export interface RegisterRequest extends LoginRequest {
 
 export interface CreateNewNoteRequest {
   uid: string;
-  note:Note
+  note: Note;
+}
+
+export interface LoadingNotesResponse {
+  notes: Note[];
 }
