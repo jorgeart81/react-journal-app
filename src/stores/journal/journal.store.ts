@@ -1,11 +1,11 @@
 import { create, StateCreator } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { createNewNote } from '@/services/firebase';
+import { createNewNote, loadingNotes } from '@/services/firebase';
 import type { Note } from './journal.interface';
 
 interface JournalState {
-  active?: Note;
+  activeNote?: Note;
   isSaving: boolean;
   messageSaved: string;
   notes: Note[];
@@ -13,10 +13,11 @@ interface JournalState {
 
 interface Actions {
   // addNewEmptyNote: () => void;
-  // setActiveNote: () => void;
+  setActiveNote: (id?: string) => void;
   // setNotes: () => void;
   // updateNote: () => void;
   startNewNote: (uid: string) => void;
+  startLoadingNotes: (uid: string) => void;
 }
 
 const storeApi: StateCreator<
@@ -28,6 +29,12 @@ const storeApi: StateCreator<
   notes: [],
 
   // Actions
+  setActiveNote: (id?: string) => {
+    if (!id) return;
+    const notes = get().notes;
+    const selectedNote = notes.find(note => note.id === id);
+    set({ activeNote: selectedNote });
+  },
   startNewNote: async (uid: string) => {
     const newNote: Note = {
       body: '',
@@ -43,7 +50,16 @@ const storeApi: StateCreator<
       newNote.id = resp.id;
       notes.push(newNote);
 
-      set({ isSaving: false, notes: notes, active: newNote });
+      set({ isSaving: false, notes: notes, activeNote: newNote });
+    } catch (error) {
+      const err = error as Error;
+      throw `${err.message}`;
+    }
+  },
+  startLoadingNotes: async (uid: string) => {
+    try {
+      const { notes } = await loadingNotes(uid);
+      set({ notes });
     } catch (error) {
       const err = error as Error;
       throw `${err.message}`;
