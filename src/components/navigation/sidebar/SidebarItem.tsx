@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { TurnedInNot } from '@mui/icons-material';
 import {
   Grid,
@@ -10,17 +11,22 @@ import {
 interface Props {
   title: string;
   description: string;
+  onClick?: React.MouseEventHandler;
 }
 
-export const SidebarItem = ({ title, description }: Props) => {
+export const SidebarItem = ({ title, description, onClick }: Props) => {
+  const newTitle = useMemo(() => {
+    return title.length > 17 ? title.substring(0, 7) : title;
+  }, [title]);
+
   return (
     <ListItem disablePadding>
-      <ListItemButton onClick={() => {}}>
+      <ListItemButton onClick={onClick}>
         <ListItemIcon>
           <TurnedInNot />
         </ListItemIcon>
         <Grid container>
-          <ListItemText primary={title} />
+          <ListItemText primary={newTitle} />
           <ListItemText secondary={description} />
         </Grid>
       </ListItemButton>

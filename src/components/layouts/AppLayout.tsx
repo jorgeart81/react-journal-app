@@ -1,15 +1,15 @@
+import { useCheckOut } from '@/hooks';
 import { Box } from '@mui/material';
+import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Navbar } from '../navigation';
 import { Sidebar } from '../navigation/sidebar/Sidebar';
-import { useCheckOut } from '@/hooks';
-import { useEffect } from 'react';
 
 const drawerWidth = 240;
 
 export const AppLayout = () => {
-  const { isAuthenticated, logout } = useCheckOut();
   const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useCheckOut();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -36,7 +36,10 @@ export const AppLayout = () => {
         <Navbar drawerWidth={drawerWidth} handleLogout={logout} />
       </Box>
       <Box sx={{ gridArea: 'sidebar', display: { xs: 'none', md: 'block' } }}>
-        <Sidebar drawerWidth={drawerWidth} />
+        <Sidebar
+          userName={user?.displayName ?? 'User'}
+          drawerWidth={drawerWidth}
+        />
       </Box>
       <Box
         component='main'
