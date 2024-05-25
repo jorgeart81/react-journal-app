@@ -7,7 +7,7 @@ import type { Note } from './journal.interface';
 interface JournalState {
   activeNote?: Note;
   isSaving: boolean;
-  messageSaved: string;
+  messageSaved?: string;
   notes: Note[];
 }
 
@@ -18,6 +18,7 @@ interface Actions {
   startNewNote: (uid: string) => void;
   updateNote: (uid: string, note: Note) => void;
   startLoadingNotes: (uid: string) => void;
+  resetMessageSaved: () => void;
 }
 
 const storeApi: StateCreator<
@@ -25,24 +26,26 @@ const storeApi: StateCreator<
   [['zustand/devtools', never]]
 > = (set, get) => ({
   isSaving: false,
-  messageSaved: '',
   notes: [],
 
   // Actions
   setActiveNote: (id?: string) => {
+    const messageSaved = get().notes;
+    if (messageSaved) set({ messageSaved: undefined });
     if (!id) return;
+
     const notes = get().notes;
     const selectedNote = notes.find(note => note.id === id);
     set({ activeNote: selectedNote });
   },
   startNewNote: async (uid: string) => {
+    set({ isSaving: true, messageSaved: undefined });
     const newNote: Note = {
       body: '',
       date: new Date().getTime(),
       imageUrls: [],
       title: '',
     };
-    set({ isSaving: true });
     const notes = get().notes;
 
     try {
@@ -50,14 +53,20 @@ const storeApi: StateCreator<
       newNote.id = resp.id;
       notes.push(newNote);
 
-      set({ isSaving: false, notes: notes, activeNote: newNote });
+      set({
+        isSaving: false,
+        notes: notes,
+        activeNote: newNote,
+        messageSaved: `${newNote.title}, creada correctamente`,
+      });
     } catch (error) {
+      set({ isSaving: false, messageSaved: undefined });
       const err = error as Error;
       throw `${err.message}`;
     }
   },
   updateNote: async (uid: string, note: Note) => {
-    set({ isSaving: true });
+    set({ isSaving: true, messageSaved: undefined });
 
     try {
       await saveNote({ uid, note });
@@ -66,8 +75,14 @@ const storeApi: StateCreator<
         return n;
       });
 
-      set({ isSaving: false, activeNote: note, notes });
+      set({
+        isSaving: false,
+        activeNote: note,
+        notes,
+        messageSaved: `${note.title}, actualizada correctamente`,
+      });
     } catch (error) {
+      set({ isSaving: false, messageSaved: undefined });
       const err = error as Error;
       throw `${err.message}`;
     }
@@ -80,6 +95,9 @@ const storeApi: StateCreator<
       const err = error as Error;
       throw `${err.message}`;
     }
+  },
+  resetMessageSaved: () => {
+    set({ messageSaved: undefined });
   },
 });
 

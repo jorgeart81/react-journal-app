@@ -1,4 +1,10 @@
-import { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 
 import {
   DeleteOutline,
@@ -51,6 +57,12 @@ export const NoteView = ({ uid, note, saveNote }: Props) => {
     });
   };
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLFormElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+    }
+  };
+
   return (
     <Grid
       container
@@ -72,6 +84,7 @@ export const NoteView = ({ uid, note, saveNote }: Props) => {
       <form
         method='POST'
         style={{ width: '100%' }}
+        onKeyDown={handleKeyDown}
         onSubmit={handleSubmit}
         noValidate>
         <input type='file' multiple style={{ display: 'none' }} />
