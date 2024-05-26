@@ -30,7 +30,7 @@ interface Actions {
 const storeApi: StateCreator<
   AuthState & Actions,
   [['zustand/devtools', never]]
-> = (set, get) => ({
+> = set => ({
   user: undefined,
   status: 'unauthorized',
 
