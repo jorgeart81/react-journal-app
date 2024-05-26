@@ -44,6 +44,7 @@ export const NoteView = ({
   deleteNote,
 }: Props) => {
   const [showDialog, setShowDialog] = useState(false);
+  const [canUploadImages, setCanUploadImages] = useState(false);
   const [formState, setFormState] = useState(note);
   const { title, body, imageUrls, date } = formState;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -55,6 +56,7 @@ export const NoteView = ({
 
   useEffect(() => {
     setFormState(note);
+    setCanUploadImages(note.imageUrls.length < 6);
   }, [note]);
 
   const { handleSubmit, handleChange } = useFormik<Note>({
@@ -87,6 +89,10 @@ export const NoteView = ({
   const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files?.length === 0) return;
+    if (files.length + note.imageUrls.length > 6) {
+      alert('Sólo puedes subir un máximo de 6 imágenes');
+      return;
+    }
     setTempFiles(files);
   };
 
@@ -114,7 +120,7 @@ export const NoteView = ({
           title='Subir imágenes'
           data-message='Botón para subir imágenes.'
           onClick={() => fileInputRef.current?.click()}
-          disabled={isSaving}>
+          disabled={isSaving || !canUploadImages}>
           <UploadFileOutlined />
         </IconButton>
         <input
