@@ -33,7 +33,7 @@ const storeApi: StateCreator<
 
   // Actions
   setActiveNote: (id?: string) => {
-    const messageSaved = get().notes;
+    const messageSaved = get().messageSaved;
     if (messageSaved) set({ messageSaved: undefined });
     if (!id) return;
 
@@ -95,7 +95,7 @@ const storeApi: StateCreator<
 
       set({
         isSaving: false,
-        activeNote: note,
+        activeNote: updatedNote,
         notes,
         messageSaved: `${note.title}, actualizada correctamente`,
       });

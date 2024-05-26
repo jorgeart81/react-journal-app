@@ -44,10 +44,15 @@ export const NoteView = ({ uid, note, saveNote, setTempFiles }: Props) => {
       body: body || '',
       date: date || 0,
       title: title || '',
-      imageUrls: imageUrls || [],
+      imageUrls: [],
     },
     onSubmit: (values: Note) => {
-      saveNote(uid, { ...values, id: note.id, date: new Date().getTime() });
+      saveNote(uid, {
+        ...values,
+        id: note.id,
+        imageUrls: imageUrls,
+        date: new Date().getTime(),
+      });
     },
   });
 
