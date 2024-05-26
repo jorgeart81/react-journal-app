@@ -1,9 +1,16 @@
-import { collection, doc, getDocs, setDoc } from 'firebase/firestore/lite';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  setDoc,
+} from 'firebase/firestore/lite';
 
 import { FirebaseError } from 'firebase/app';
 import { FirebaseDB } from '../config';
 import type {
   CreateNewNoteRequest,
+  DeleteNoteRequest,
   LoadingNotesResponse,
   SaveNoteRequest,
 } from '../firebase.interface';
@@ -37,6 +44,18 @@ export const saveNote = async ({ uid, note }: SaveNoteRequest) => {
   try {
     const docRef = doc(FirebaseDB, `${uid}/journal/notes/${id}`);
     await setDoc(docRef, noteToFireStore, { merge: true });
+  } catch (error) {
+    errorHandler(error);
+  }
+};
+
+export const deleteNote = async ({
+  uid,
+  id,
+}: DeleteNoteRequest): Promise<void> => {
+  try {
+    const docRef = doc(FirebaseDB, `${uid}/journal/notes/${id}`);
+    await deleteDoc(docRef);
   } catch (error) {
     errorHandler(error);
   }

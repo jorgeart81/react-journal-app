@@ -1,7 +1,12 @@
 import { create, StateCreator } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { createNewNote, loadingNotes, saveNote } from '@/services/firebase';
+import {
+  createNewNote,
+  deleteNote,
+  loadingNotes,
+  saveNote,
+} from '@/services/firebase';
 import type { Note } from './journal.interface';
 import { ImagesService } from '@/services/images';
 
@@ -15,12 +20,13 @@ interface JournalState {
 
 interface Actions {
   setActiveNote: (id?: string) => void;
-  startNewNote: (uid: string) => void;
-  updateNote: (uid: string, note: Note) => void;
-  startLoadingNotes: (uid: string) => void;
   setTempFiles: (files: FileList) => void;
   resetMessageSaved: () => void;
   clearState: () => void;
+  startNewNote: (uid: string) => Promise<void>;
+  updateNote: (uid: string, note: Note) => Promise<void>;
+  startLoadingNotes: (uid: string) => Promise<void>;
+  startDeleteNote: (uid: string, id: string) => Promise<void>;
 }
 
 const storeApi: StateCreator<
@@ -39,6 +45,21 @@ const storeApi: StateCreator<
     const notes = get().notes;
     const selectedNote = notes.find(note => note.id === id);
     set({ activeNote: selectedNote, tempFiles: undefined });
+  },
+  setTempFiles: (files: FileList) => {
+    set({ tempFiles: files });
+  },
+  resetMessageSaved: () => {
+    set({ messageSaved: undefined });
+  },
+  clearState: () => {
+    set({
+      activeNote: undefined,
+      isSaving: undefined,
+      messageSaved: undefined,
+      notes: [],
+      tempFiles: undefined,
+    });
   },
   startNewNote: async (uid: string) => {
     set({ isSaving: true, messageSaved: undefined });
@@ -59,7 +80,7 @@ const storeApi: StateCreator<
         isSaving: false,
         notes: notes,
         activeNote: newNote,
-        messageSaved: `${newNote.title}, creada correctamente`,
+        messageSaved: `${newNote.title}, creada correctamente.`,
       });
     } catch (error) {
       set({ isSaving: false, messageSaved: undefined });
@@ -96,7 +117,7 @@ const storeApi: StateCreator<
         isSaving: false,
         activeNote: updatedNote,
         notes,
-        messageSaved: `${note.title}, actualizada correctamente`,
+        messageSaved: `${note.title}, actualizada correctamente.`,
       });
     } catch (error) {
       set({ isSaving: false, messageSaved: undefined });
@@ -113,20 +134,22 @@ const storeApi: StateCreator<
       throw `${err.message}`;
     }
   },
-  setTempFiles: (files: FileList) => {
-    set({ tempFiles: files });
-  },
-  resetMessageSaved: () => {
-    set({ messageSaved: undefined });
-  },
-  clearState: () => {
-    set({
-      activeNote: undefined,
-      isSaving: undefined,
-      messageSaved: undefined,
-      notes: [],
-      tempFiles: undefined,
-    });
+  startDeleteNote: async (uid: string, id: string) => {
+    set({ isSaving: true, messageSaved: undefined });
+
+    try {
+      await deleteNote({ uid, id });
+      const notes = get().notes.filter(n => n.id !== id);
+      set({
+        isSaving: false,
+        notes: notes,
+        activeNote: undefined,
+        messageSaved: `Nota eliminada correctamente.`,
+      });
+    } catch (error) {
+      const err = error as Error;
+      throw `${err.message}`;
+    }
   },
 });
 

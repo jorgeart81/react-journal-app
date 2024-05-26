@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { MouseEventHandler } from 'react';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -7,40 +7,39 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function AlertDialog() {
-  const [open, setOpen] = useState(false);
+interface Props {
+  isShow: boolean;
+  title?: string;
+  message?: string;
+  handleAgree?: MouseEventHandler;
+  handleClose?: MouseEventHandler;
+}
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
+export default function AlertDialog({
+  isShow,
+  title = "Use Google's location service?",
+  message = `Let Google help apps determine location. This means sending
+  anonymous location data to Google, even when no apps are running.`,
+  handleAgree,
+  handleClose,
+}: Props) {
   return (
     <>
-      <Button variant='outlined' onClick={handleClickOpen}>
-        Open alert dialog
-      </Button>
       <Dialog
-        open={open}
+        open={isShow}
         onClose={handleClose}
         aria-labelledby='alert-dialog-title'
         aria-describedby='alert-dialog-description'>
-        <DialogTitle id='alert-dialog-title'>
-          {"Use Google's location service?"}
-        </DialogTitle>
+        <DialogTitle id='alert-dialog-title'>{title}</DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
-            Let Google help apps determine location. This means sending
-            anonymous location data to Google, even when no apps are running.
+            {message}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose} autoFocus>
-            Agree
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={handleAgree} autoFocus>
+            Aceptar
           </Button>
         </DialogActions>
       </Dialog>

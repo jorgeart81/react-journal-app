@@ -19,3 +19,8 @@ export interface LoadingNotesResponse {
 }
 
 export interface SaveNoteRequest extends CreateNewNoteRequest {}
+
+export interface DeleteNoteRequest {
+  uid: string;
+  id: string;
+}

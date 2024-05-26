@@ -12,7 +12,7 @@ export class ImagesService {
     formData.append('file', file);
 
     try {
-      const { data, statusText, status } =
+      const { data, status } =
         await cloudinaryLibrary.post<CloudinaryResponse>('/upload', formData);
       if (status !== 200) throw new Error('No se pudo subir la imagen.');
 

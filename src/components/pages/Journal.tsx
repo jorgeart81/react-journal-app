@@ -14,6 +14,7 @@ export const Journal = () => {
     setTempFiles,
     updateNote,
     resetMessageSaved,
+    startDeleteNote,
   } = useJournalStore(state => ({
     activeNote: state.activeNote,
     isSaving: state.isSaving,
@@ -22,6 +23,7 @@ export const Journal = () => {
     setTempFiles: state.setTempFiles,
     updateNote: state.updateNote,
     resetMessageSaved: state.resetMessageSaved,
+    startDeleteNote: state.startDeleteNote,
   }));
 
   const addNewNote = () => {
@@ -35,9 +37,10 @@ export const Journal = () => {
         <NoteView
           uid={uid}
           note={activeNote}
+          isSaving={isSaving}
           saveNote={updateNote}
           setTempFiles={setTempFiles}
-          isSaving={isSaving}
+          deleteNote={startDeleteNote}
         />
       ) : (
         <NothingSelectedView />

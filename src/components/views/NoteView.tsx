@@ -24,6 +24,7 @@ import { useFormik } from 'formik';
 
 import type { Note } from '@/models';
 import { ImageGallery } from '../ImageGallery';
+import { AlertDialog } from '../dialogs';
 
 interface Props {
   isSaving?: boolean;
@@ -31,6 +32,7 @@ interface Props {
   note: Note;
   saveNote: (uid: string, note: Note) => void;
   setTempFiles: (files: FileList) => void;
+  deleteNote: (uid: string, id: string) => void;
 }
 
 export const NoteView = ({
@@ -39,7 +41,9 @@ export const NoteView = ({
   note,
   saveNote,
   setTempFiles,
+  deleteNote,
 }: Props) => {
+  const [showDialog, setShowDialog] = useState(false);
   const [formState, setFormState] = useState(note);
   const { title, body, imageUrls, date } = formState;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -180,11 +184,19 @@ export const NoteView = ({
           sx={{ mt: 2 }}
           color='error'
           disabled={isSaving}
-          onClick={() => {}}>
+          onClick={() => setShowDialog(true)}>
           <DeleteOutline />
           Borrar
         </Button>
       </Grid>
+
+      <AlertDialog
+        title={`Eliminar`}
+        message={`¿Está seguro que quiere eliminar la nota ${note.title}?`}
+        isShow={showDialog}
+        handleClose={() => setShowDialog(false)}
+        handleAgree={() => note.id && deleteNote(uid, note.id)}
+      />
 
       <ImageGallery images={imageUrls} />
     </Grid>

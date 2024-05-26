@@ -15,7 +15,7 @@ export const CircularIndeterminate = () => {
         zIndex: 100,
         backgroundColor: 'rgba(0, 0, 0, 0.060)',
       }}>
-      <CircularProgress />
+      <CircularProgress color='error' />
     </Box>
   );
 };
