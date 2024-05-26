@@ -12,20 +12,34 @@ import {
   SaveOutlined,
   UploadFileOutlined,
 } from '@mui/icons-material';
-import { Button, Grid, IconButton, TextField, Typography } from '@mui/material';
+import {
+  Button,
+  CircularProgress,
+  Grid,
+  IconButton,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useFormik } from 'formik';
 
 import type { Note } from '@/models';
 import { ImageGallery } from '../ImageGallery';
 
 interface Props {
+  isSaving?: boolean;
   uid: string;
   note: Note;
   saveNote: (uid: string, note: Note) => void;
   setTempFiles: (files: FileList) => void;
 }
 
-export const NoteView = ({ uid, note, saveNote, setTempFiles }: Props) => {
+export const NoteView = ({
+  isSaving,
+  uid,
+  note,
+  saveNote,
+  setTempFiles,
+}: Props) => {
   const [formState, setFormState] = useState(note);
   const { title, body, imageUrls, date } = formState;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -95,7 +109,8 @@ export const NoteView = ({ uid, note, saveNote, setTempFiles }: Props) => {
           color='primary'
           title='Subir imágenes'
           data-message='Botón para subir imágenes.'
-          onClick={() => fileInputRef.current?.click()}>
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isSaving}>
           <UploadFileOutlined />
         </IconButton>
         <input
@@ -115,13 +130,17 @@ export const NoteView = ({ uid, note, saveNote, setTempFiles }: Props) => {
         onSubmit={handleSubmit}
         noValidate>
         <Grid item>
-          <Button type='submit' color='primary' sx={{ padding: 2 }}>
+          <Button
+            type='submit'
+            color='primary'
+            sx={{ padding: 2 }}
+            disabled={isSaving}>
             <SaveOutlined sx={{ fontSize: 30, mr: 1 }} />
             Guardar
           </Button>
         </Grid>
 
-        <Grid container>
+        <Grid container position='relative'>
           <TextField
             type='text'
             variant='filled'
@@ -131,6 +150,7 @@ export const NoteView = ({ uid, note, saveNote, setTempFiles }: Props) => {
             value={title}
             onChange={onInputChange}
             sx={{ border: 'none', mb: 1 }}
+            disabled={isSaving}
             fullWidth
           />
           <TextField
@@ -142,19 +162,30 @@ export const NoteView = ({ uid, note, saveNote, setTempFiles }: Props) => {
             minRows={5}
             value={body}
             onChange={onInputChange}
+            disabled={isSaving}
             fullWidth
           />
+          {isSaving && (
+            <CircularProgress
+              size={20}
+              sx={{ position: 'absolute', right: 10, bottom: 10 }}
+            />
+          )}
         </Grid>
       </form>
 
       <Grid container justifyContent='end'>
-        <Button type='button' sx={{ mt: 2 }} color='error' onClick={() => {}}>
+        <Button
+          type='button'
+          sx={{ mt: 2 }}
+          color='error'
+          disabled={isSaving}
+          onClick={() => {}}>
           <DeleteOutline />
           Borrar
         </Button>
       </Grid>
 
-      {/* Galleria de imágenes */}
       <ImageGallery images={imageUrls} />
     </Grid>
   );

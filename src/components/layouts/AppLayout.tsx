@@ -4,12 +4,14 @@ import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Navbar } from '../navigation';
 import { Sidebar } from '../navigation/sidebar/Sidebar';
+import { useJournalStore } from '@/stores';
 
 const drawerWidth = 240;
 
 export const AppLayout = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useCheckOut();
+  const clearState = useJournalStore(state => state.clearState);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -19,6 +21,11 @@ export const AppLayout = () => {
   }, [isAuthenticated]);
 
   if (!isAuthenticated) return null;
+
+  const handleLogout = () => {
+    logout();
+    clearState();
+  };
 
   return (
     <Box
@@ -33,7 +40,7 @@ export const AppLayout = () => {
         `,
       }}>
       <Box sx={{ gridArea: 'navbar', height: { xs: '56px', sm: '64px' } }}>
-        <Navbar drawerWidth={drawerWidth} handleLogout={logout} />
+        <Navbar drawerWidth={drawerWidth} handleLogout={handleLogout} />
       </Box>
       <Box sx={{ gridArea: 'sidebar', display: { xs: 'none', md: 'block' } }}>
         <Sidebar

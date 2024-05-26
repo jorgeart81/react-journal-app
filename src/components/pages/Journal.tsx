@@ -37,6 +37,7 @@ export const Journal = () => {
           note={activeNote}
           saveNote={updateNote}
           setTempFiles={setTempFiles}
+          isSaving={isSaving}
         />
       ) : (
         <NothingSelectedView />

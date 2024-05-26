@@ -14,14 +14,13 @@ interface JournalState {
 }
 
 interface Actions {
-  // addNewEmptyNote: () => void;
   setActiveNote: (id?: string) => void;
-  // setNotes: () => void;
   startNewNote: (uid: string) => void;
   updateNote: (uid: string, note: Note) => void;
   startLoadingNotes: (uid: string) => void;
   setTempFiles: (files: FileList) => void;
   resetMessageSaved: () => void;
+  clearState: () => void;
 }
 
 const storeApi: StateCreator<
@@ -39,7 +38,7 @@ const storeApi: StateCreator<
 
     const notes = get().notes;
     const selectedNote = notes.find(note => note.id === id);
-    set({ activeNote: selectedNote });
+    set({ activeNote: selectedNote, tempFiles: undefined });
   },
   startNewNote: async (uid: string) => {
     set({ isSaving: true, messageSaved: undefined });
@@ -119,6 +118,15 @@ const storeApi: StateCreator<
   },
   resetMessageSaved: () => {
     set({ messageSaved: undefined });
+  },
+  clearState: () => {
+    set({
+      activeNote: undefined,
+      isSaving: undefined,
+      messageSaved: undefined,
+      notes: [],
+      tempFiles: undefined,
+    });
   },
 });
 
