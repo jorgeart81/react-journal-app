@@ -3,12 +3,14 @@ import { devtools } from 'zustand/middleware';
 
 import { createNewNote, loadingNotes, saveNote } from '@/services/firebase';
 import type { Note } from './journal.interface';
+import { ImagesService } from '@/services/images';
 
 interface JournalState {
   activeNote?: Note;
   isSaving: boolean;
   messageSaved?: string;
   notes: Note[];
+  tempFiles?: FileList;
 }
 
 interface Actions {
@@ -18,6 +20,7 @@ interface Actions {
   startNewNote: (uid: string) => void;
   updateNote: (uid: string, note: Note) => void;
   startLoadingNotes: (uid: string) => void;
+  setTempFiles: (files: FileList) => void;
   resetMessageSaved: () => void;
 }
 
@@ -66,10 +69,25 @@ const storeApi: StateCreator<
     }
   },
   updateNote: async (uid: string, note: Note) => {
+    const fileUploadPromises: Array<Promise<string>> = [];
+    const files = get().tempFiles;
     set({ isSaving: true, messageSaved: undefined });
 
     try {
-      await saveNote({ uid, note });
+      let photosUrls: string[] = [];
+      if (files) {
+        for (const file of files) {
+          fileUploadPromises.push(ImagesService.fileUpload(file));
+        }
+        photosUrls = await Promise.all(fileUploadPromises);
+      }
+
+      const updatedNote = {
+        ...note,
+        imageUrls: [...note.imageUrls, ...photosUrls],
+      };
+      await saveNote({ uid, note: updatedNote });
+
       const notes = get().notes.map(n => {
         if (n.id === note.id) return note;
         return n;
@@ -95,6 +113,9 @@ const storeApi: StateCreator<
       const err = error as Error;
       throw `${err.message}`;
     }
+  },
+  setTempFiles: (files: FileList) => {
+    set({ tempFiles: files });
   },
   resetMessageSaved: () => {
     set({ messageSaved: undefined });

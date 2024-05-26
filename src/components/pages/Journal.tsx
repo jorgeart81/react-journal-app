@@ -11,6 +11,7 @@ export const Journal = () => {
     isSaving,
     messageSaved,
     startNewNote,
+    setTempFiles,
     updateNote,
     resetMessageSaved,
   } = useJournalStore(state => ({
@@ -18,6 +19,7 @@ export const Journal = () => {
     isSaving: state.isSaving,
     messageSaved: state.messageSaved,
     startNewNote: state.startNewNote,
+    setTempFiles: state.setTempFiles,
     updateNote: state.updateNote,
     resetMessageSaved: state.resetMessageSaved,
   }));
@@ -30,7 +32,12 @@ export const Journal = () => {
   return (
     <>
       {uid && activeNote ? (
-        <NoteView uid={uid} note={activeNote} saveNote={updateNote} />
+        <NoteView
+          uid={uid}
+          note={activeNote}
+          saveNote={updateNote}
+          setTempFiles={setTempFiles}
+        />
       ) : (
         <NothingSelectedView />
       )}

@@ -22,9 +22,10 @@ interface Props {
   uid: string;
   note: Note;
   saveNote: (uid: string, note: Note) => void;
+  setTempFiles: (files: FileList) => void;
 }
 
-export const NoteView = ({ uid, note, saveNote }: Props) => {
+export const NoteView = ({ uid, note, saveNote, setTempFiles }: Props) => {
   const [formState, setFormState] = useState(note);
   const { title, body, imageUrls, date } = formState;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -38,12 +39,12 @@ export const NoteView = ({ uid, note, saveNote }: Props) => {
     setFormState(note);
   }, [note]);
 
-  const { handleSubmit, handleChange, setFieldValue } = useFormik<Note>({
+  const { handleSubmit, handleChange } = useFormik<Note>({
     initialValues: {
       body: body || '',
       date: date || 0,
-      imageUrls: [],
       title: title || '',
+      imageUrls: imageUrls || [],
     },
     onSubmit: (values: Note) => {
       saveNote(uid, { ...values, id: note.id, date: new Date().getTime() });
@@ -61,8 +62,9 @@ export const NoteView = ({ uid, note, saveNote }: Props) => {
   };
 
   const onFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length === 0) return;
-    setFieldValue('imageUrls', e.target.files);
+    const files = e.target.files;
+    if (!files || files?.length === 0) return;
+    setTempFiles(files);
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLFormElement>) => {
@@ -91,6 +93,14 @@ export const NoteView = ({ uid, note, saveNote }: Props) => {
           onClick={() => fileInputRef.current?.click()}>
           <UploadFileOutlined />
         </IconButton>
+        <input
+          type='file'
+          accept='.jpg, .jpeg, .png'
+          multiple
+          ref={fileInputRef}
+          onChange={onFileInputChange}
+          style={{ display: 'none' }}
+        />
       </Grid>
 
       <form
@@ -99,15 +109,6 @@ export const NoteView = ({ uid, note, saveNote }: Props) => {
         onKeyDown={handleKeyDown}
         onSubmit={handleSubmit}
         noValidate>
-        <input
-          name='imageUrls'
-          type='file'
-          accept='.jpg, .jpeg, .png'
-          multiple
-          ref={fileInputRef}
-          onChange={onFileInputChange}
-          style={{ display: 'none' }}
-        />
         <Grid item>
           <Button type='submit' color='primary' sx={{ padding: 2 }}>
             <SaveOutlined sx={{ fontSize: 30, mr: 1 }} />
