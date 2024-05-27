@@ -4,9 +4,14 @@ import { AppBar, Grid, IconButton, Toolbar, Typography } from '@mui/material';
 interface Props {
   drawerWidth?: number;
   handleLogout: React.MouseEventHandler;
+  toogleMenu?: React.MouseEventHandler;
 }
 
-export const Navbar = ({ drawerWidth = 240, handleLogout }: Props) => (
+export const Navbar = ({
+  drawerWidth = 240,
+  handleLogout,
+  toogleMenu,
+}: Props) => (
   <AppBar
     position='fixed'
     sx={{
@@ -16,7 +21,8 @@ export const Navbar = ({ drawerWidth = 240, handleLogout }: Props) => (
       <IconButton
         color='inherit'
         edge='start'
-        sx={{ mr: 2, display: { sm: 'none' } }}>
+        onClick={toogleMenu}
+        sx={{ mr: 2, display: { md: 'none' } }}>
         <MenuOutlined></MenuOutlined>
       </IconButton>
       <Grid

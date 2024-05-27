@@ -5,8 +5,15 @@ import { SidebarItem } from './SidebarItem';
 interface Props {
   drawerWidth?: number;
   userName?: string;
+  showMobileDrawer?: boolean;
+  onCloseMobileDrawer?: React.MouseEventHandler;
 }
-export const Sidebar = ({ drawerWidth = 240, userName = 'User' }: Props) => {
+export const Sidebar = ({
+  drawerWidth = 240,
+  userName = 'User',
+  showMobileDrawer = false,
+  onCloseMobileDrawer,
+}: Props) => {
   const { notes, setActiveNote } = useJournalStore(state => ({
     notes: state.notes,
     setActiveNote: state.setActiveNote,
@@ -20,7 +27,34 @@ export const Sidebar = ({ drawerWidth = 240, userName = 'User' }: Props) => {
         variant='permanent' //temporary
         open
         sx={{
-          display: { xs: 'block' },
+          display: { xs: 'none', md: 'block' },
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+        }}>
+        <Toolbar>
+          <Typography variant='h5' noWrap component='div'>
+            {userName}
+          </Typography>
+        </Toolbar>
+        <Divider />
+        <List>
+          {notes?.map(note => (
+            <SidebarItem
+              key={note.id}
+              title={note.title}
+              description={note.body}
+              onClick={() => setActiveNote(note.id)}
+            />
+          ))}
+        </List>
+      </Drawer>
+
+      {/* Mobile */}
+      <Drawer
+        variant='temporary'
+        open={showMobileDrawer}
+        onClose={onCloseMobileDrawer}
+        sx={{
+          display: { xs: 'block', md: 'none' },
           '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
         }}>
         <Toolbar>

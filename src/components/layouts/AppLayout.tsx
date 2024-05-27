@@ -1,6 +1,6 @@
 import { useCheckOut } from '@/hooks';
 import { Box } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Navbar } from '../navigation';
 import { Sidebar } from '../navigation/sidebar/Sidebar';
@@ -10,6 +10,7 @@ const drawerWidth = 240;
 
 export const AppLayout = () => {
   const navigate = useNavigate();
+  const [showMobileDrawer, setShowMobileDrawer] = useState(false);
   const { user, isAuthenticated, logout } = useCheckOut();
   const clearState = useJournalStore(state => state.clearState);
 
@@ -40,12 +41,20 @@ export const AppLayout = () => {
         `,
       }}>
       <Box sx={{ gridArea: 'navbar', height: { xs: '56px', sm: '64px' } }}>
-        <Navbar drawerWidth={drawerWidth} handleLogout={handleLogout} />
+        <Navbar
+          drawerWidth={drawerWidth}
+          handleLogout={handleLogout}
+          toogleMenu={() => {
+            setShowMobileDrawer(prev => !prev);
+          }}
+        />
       </Box>
       <Box sx={{ gridArea: 'sidebar', display: { xs: 'none', md: 'block' } }}>
         <Sidebar
           userName={user?.displayName ?? 'User'}
           drawerWidth={drawerWidth}
+          showMobileDrawer={showMobileDrawer}
+          onCloseMobileDrawer={() => setShowMobileDrawer(false)}
         />
       </Box>
       <Box
